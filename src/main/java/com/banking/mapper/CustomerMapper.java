@@ -13,7 +13,7 @@ public class CustomerMapper {
         return Customer.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .phone(request.getEmail())
+                .phone(request.getPhone())
                 .customerStatus(CustomerStatus.ACTIVE)
                 .build();
     }

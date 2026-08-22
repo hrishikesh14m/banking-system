@@ -27,7 +27,7 @@ public class Customer extends BaseEntity{
     @Column(nullable = false, length = 150)
     private String email;
 
-    @Column(nullable = false , length = 15)
+    @Column( unique = true, nullable = false , length = 15)
     private String phone;
 
     @Enumerated(EnumType.STRING)
