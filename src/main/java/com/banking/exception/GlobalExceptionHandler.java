@@ -2,8 +2,11 @@ package com.banking.exception;
 
 import com.banking.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.Response;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -47,7 +50,7 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 errorResponse
         );
 
@@ -96,5 +99,22 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticException(
+            ObjectOptimisticLockingFailureException exception,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .success(false)
+                .message("This account is modified by another transaction. please try again.")
+                .errorCode("CONCURRENT_MODIFICATION")
+                .timestamp(LocalDateTime.now())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(errorResponse);
+    }
 
 }

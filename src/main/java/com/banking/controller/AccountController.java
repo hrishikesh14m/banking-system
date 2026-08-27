@@ -1,8 +1,10 @@
 package com.banking.controller;
 
 import com.banking.dto.request.AccountRequest;
+import com.banking.dto.request.MoneyRequest;
 import com.banking.dto.response.AccountResponse;
 import com.banking.dto.response.ApiResponse;
+import com.banking.dto.response.BankTransactionResponse;
 import com.banking.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +90,46 @@ public class AccountController {
                 ApiResponse.<Void>builder()
                         .success(true)
                         .message("Account closed successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+
+    @PostMapping("/{accountNumber}/deposit")
+    public ResponseEntity<ApiResponse<BankTransactionResponse>> deposit(
+            @PathVariable String accountNumber,
+            @Valid @RequestBody MoneyRequest request
+    ) {
+
+        BankTransactionResponse response =
+                accountService.deposit(accountNumber, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<BankTransactionResponse>builder()
+                        .success(true)
+                        .message("Amount deposited successfully")
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+
+    @PostMapping("/{accountNumber}/withdraw")
+    public ResponseEntity<ApiResponse<BankTransactionResponse>> withdraw(
+            @PathVariable String accountNumber,
+            @Valid @RequestBody MoneyRequest request
+    ) {
+
+        BankTransactionResponse response =
+                accountService.withdraw(accountNumber, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<BankTransactionResponse>builder()
+                        .success(true)
+                        .message("Amount withdrawn successfully")
+                        .data(response)
                         .timestamp(LocalDateTime.now())
                         .build()
         );

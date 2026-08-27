@@ -60,4 +60,8 @@ public class Account extends BaseEntity{
             //example : 10000000000000000.00
     )
     private BigDecimal balance;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 }
