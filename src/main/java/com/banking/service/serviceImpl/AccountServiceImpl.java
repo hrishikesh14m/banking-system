@@ -6,6 +6,8 @@ import com.banking.entity.Account;
 import com.banking.entity.Customer;
 import com.banking.enums.AccountStatus;
 import com.banking.enums.CustomerStatus;
+import com.banking.exception.BusinessException;
+import com.banking.exception.ResourceNotFoundException;
 import com.banking.mapper.AccountMapper;
 import com.banking.repository.AccountRepository;
 import com.banking.repository.CustomerRepository;
@@ -40,11 +42,11 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse createAccount(AccountRequest accountRequest) {
 
         Customer customer = customerRepository.findById(accountRequest.getCustomerId()).orElseThrow(
-                () -> new RuntimeException("CUstomer not found with id: " + accountRequest.getCustomerId())
+                () -> new ResourceNotFoundException("Customer not found with id: " + accountRequest.getCustomerId())
         );
 
         if (customer.getCustomerStatus() != CustomerStatus.ACTIVE) {
-            throw new RuntimeException("Cannot create account for inactive customer");
+            throw new BusinessException("Cannot create account for inactive customer");
         }
 
         String accountNumber = accountNumberGenerator.generate();
@@ -67,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly = true)
     public AccountResponse getAccount(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(
-                () -> new RuntimeException("Account not found for " + accountNumber)
+                () -> new ResourceNotFoundException("Account not found for " + accountNumber)
         );
 
         return accountMapper.toResponse(account);
@@ -78,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountResponse> getCustomersAccount(Long customerId) {
 
         if (!customerRepository.existsById(customerId)) {
-            throw new RuntimeException("Customer not found with id : " + customerId);
+            throw new ResourceNotFoundException("Customer not found with id : " + customerId);
         }
 
         return accountRepository.findByCustomerId(customerId).stream()
@@ -89,10 +91,10 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void closeAccount(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new RuntimeException("Account not found: " + accountNumber));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found: " + accountNumber));
 
         if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
-            throw new RuntimeException("cannot close an account with non-zero balance");
+            throw new BusinessException("cannot close an account with non-zero balance");
         }
 
         account.setAccountStatus(AccountStatus.CLOSED);

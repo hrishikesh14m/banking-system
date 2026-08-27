@@ -4,6 +4,8 @@ import com.banking.dto.request.CustomerRequest;
 import com.banking.dto.response.CustomerResponse;
 import com.banking.entity.Customer;
 import com.banking.enums.CustomerStatus;
+import com.banking.exception.DuplicateResourceException;
+import com.banking.exception.ResourceNotFoundException;
 import com.banking.mapper.CustomerMapper;
 import com.banking.repository.CustomerRepository;
 import com.banking.service.CustomerService;
@@ -31,7 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
         log.info("Creating customer with email={}", customerRequest.getEmail());
 
         if (customerRepository.existsByEmail(customerRequest.getEmail())) {
-            throw new RuntimeException(
+            throw new DuplicateResourceException(
                     "customer already exists with email " + customerRequest.getEmail()
             );
         }
@@ -50,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
         log.info("fetching customer with customerId : {}", id);
 
         Customer customer = customerRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("customer not found with id : " + id)
+                () -> new ResourceNotFoundException("customer not found with id : " + id)
         );
 
         return customerMapper.toResponse(customer);
@@ -67,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse updateCustomer(Long customerId, CustomerRequest customerRequest) {
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new RuntimeException("Customer not found with id: " + customerId)
+                () -> new ResourceNotFoundException("Customer not found with id: " + customerId)
         );
 
         customer.setName(customerRequest.getName());
@@ -83,7 +85,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public void deactivateCustomer(Long customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new RuntimeException("Customer not found with id: " + customerId)
+                () -> new ResourceNotFoundException("Customer not found with id: " + customerId)
         );
 
         customer.setCustomerStatus(CustomerStatus.INACTIVE);
