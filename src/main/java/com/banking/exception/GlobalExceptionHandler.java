@@ -1,5 +1,6 @@
 package com.banking.exception;
 
+import com.banking.dto.response.ApiResponse;
 import com.banking.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.Response;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -116,5 +118,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(errorResponse);
     }
+
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(
+            AuthenticationFailedException exception
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ApiResponse.<Void>builder()
+                                .success(false)
+                                .message(exception.getMessage())
+                                .timestamp(LocalDateTime.now())
+                                .build()
+                );
+    }
+
 
 }

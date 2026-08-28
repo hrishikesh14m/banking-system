@@ -1,5 +1,6 @@
 package com.banking.controller;
 
+import com.banking.dto.request.LoginRequest;
 import com.banking.dto.request.RegisterRequest;
 import com.banking.dto.response.ApiResponse;
 import com.banking.service.AuthService;
@@ -36,4 +37,22 @@ public class AuthController {
                                 .build()
                 );
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<Void>> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+
+        authService.login(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Login successful")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+
 }
