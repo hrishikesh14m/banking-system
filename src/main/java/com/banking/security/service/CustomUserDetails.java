@@ -1,10 +1,7 @@
 package com.banking.security.service;
 
 import com.banking.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-@Builder
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
@@ -33,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
+    public @Nullable String getPassword() {
         return user.getPassword();
     }
 
@@ -42,7 +38,8 @@ public class CustomUserDetails implements UserDetails {
         return user.getUsername();
     }
 
-    public boolean isEnable() {
+    @Override
+    public boolean isEnabled() {
         return user.isEnabled();
     }
 }

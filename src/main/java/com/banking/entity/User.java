@@ -1,8 +1,9 @@
 package com.banking.entity;
 
-import com.banking.security.enums.Role;
+import com.banking.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 
 @Entity
 @Table(
@@ -41,7 +42,7 @@ public class User extends BaseEntity {
     private Role role;
 
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean enabled;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -49,6 +50,4 @@ public class User extends BaseEntity {
             unique = true
     )
     private Customer customer;
-
-
 }

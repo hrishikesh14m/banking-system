@@ -2,10 +2,11 @@ package com.banking.service;
 
 import com.banking.dto.request.LoginRequest;
 import com.banking.dto.request.RegisterRequest;
+import com.banking.dto.response.LoginResponse;
 
 public interface AuthService {
 
-    void register(RegisterRequest request);
+    void register(RegisterRequest registerRequest);
 
-    void login(LoginRequest request);
+    LoginResponse login(LoginRequest request);
 }

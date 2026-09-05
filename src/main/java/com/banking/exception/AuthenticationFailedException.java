@@ -1,7 +1,6 @@
 package com.banking.exception;
 
-public class AuthenticationFailedException extends RuntimeException {
-
+public class AuthenticationFailedException extends RuntimeException{
     public AuthenticationFailedException(String message) {
         super(message);
     }

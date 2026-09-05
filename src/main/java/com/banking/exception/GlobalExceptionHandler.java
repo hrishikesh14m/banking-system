@@ -119,21 +119,19 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-
     @ExceptionHandler(AuthenticationFailedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(
             AuthenticationFailedException exception
     ) {
+        ErrorResponse response = ErrorResponse.builder()
+                .success(false)
+                .message("Authentication failed")
+                .errorCode("AUTHENTICATION_FAILED")
+                .timestamp(LocalDateTime.now())
+                .build();
 
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(
-                        ApiResponse.<Void>builder()
-                                .success(false)
-                                .message(exception.getMessage())
-                                .timestamp(LocalDateTime.now())
-                                .build()
-                );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response);
     }
 
 

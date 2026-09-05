@@ -3,6 +3,7 @@ package com.banking.controller;
 import com.banking.dto.request.LoginRequest;
 import com.banking.dto.request.RegisterRequest;
 import com.banking.dto.response.ApiResponse;
+import com.banking.dto.response.LoginResponse;
 import com.banking.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,34 +25,33 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(
-            @Valid @RequestBody RegisterRequest request
+            @Valid @RequestBody RegisterRequest registerRequest
     ) {
-        authService.register(request);
-
+        authService.register(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
                         ApiResponse.<Void>builder()
                                 .success(true)
-                                .message("User register successfully")
+                                .message("User registered successfully")
                                 .timestamp(LocalDateTime.now())
                                 .build()
                 );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<Void>> login(
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
             @Valid @RequestBody LoginRequest request
     ) {
-
-        authService.login(request);
-
-        return ResponseEntity.ok(
-                ApiResponse.<Void>builder()
-                        .success(true)
-                        .message("Login successful")
-                        .timestamp(LocalDateTime.now())
-                        .build()
-        );
+         LoginResponse response = authService.login(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        ApiResponse.<LoginResponse>builder()
+                                .success(true)
+                                .data(response)
+                                .message("Login successfull")
+                                .timestamp(LocalDateTime.now())
+                                .build()
+                );
     }
 
 

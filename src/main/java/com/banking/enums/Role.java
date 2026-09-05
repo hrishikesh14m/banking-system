@@ -1,4 +1,4 @@
-package com.banking.security.enums;
+package com.banking.enums;
 
 public enum Role {
     ADMIN,
